@@ -26,6 +26,18 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'tab3',
         component: () => import('@/views/Tab3Page.vue')
+      },
+      {
+        path: 'tab3/:id',
+        component: () => import('@/views/ShareDetailPage.vue')
+      },
+      {
+        path: 'tab4',
+        component: () => import('@/views/TogetherPage.vue')
+      },
+      {
+        path: 'messages',
+        component: () => import('@/views/MessagesPage.vue')
       }
     ]
   }

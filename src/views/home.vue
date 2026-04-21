@@ -27,7 +27,7 @@
           />
           <div class="hero-mask">
             <div class="hero-title">探索我的南宁</div>
-            <div class="hero-subtitle">民俗节庆 / 音乐演出 / 周边度假，一站发现</div>
+            <div class="hero-subtitle">民俗节庆 / 音乐演出 / 私人定制，一站发现</div>
           </div>
         </section>
 
@@ -65,9 +65,66 @@
               <ion-label>音乐演出</ion-label>
             </ion-segment-button>
             <ion-segment-button value="family">
-              <ion-label>亲子度假</ion-label>
+              <ion-label>私人定制</ion-label>
             </ion-segment-button>
           </ion-segment>
+        </section>
+
+        <section v-if="showGuideList" class="guide-section">
+          <div class="section-header">
+            <div>
+              <div class="section-title">导游列表</div>
+              <div class="section-subtitle">点击下拉可查看完整简介与操作入口</div>
+            </div>
+          </div>
+
+          <div class="guide-list">
+            <div v-for="guide in guides" :key="guide.id" class="guide-card">
+              <div class="guide-top">
+                <img :src="guide.avatar" :alt="guide.name" class="guide-avatar" />
+
+                <div class="guide-main">
+                  <div class="guide-name-row">
+                    <div class="guide-name">{{ guide.name }}</div>
+                    <button
+                      type="button"
+                      class="expand-button"
+                      @click="toggleGuide(guide.id)"
+                    >
+                      <ion-icon :icon="expandedGuideId === guide.id ? chevronUpOutline : chevronDownOutline" />
+                    </button>
+                  </div>
+
+                  <div class="guide-meta">
+                    <span>{{ guide.age }}岁</span>
+                    <span>{{ guide.gender }}</span>
+                  </div>
+                  <div class="guide-skill">技能：{{ guide.skills }}</div>
+                  <div class="guide-route">擅长路线：{{ guide.routes }}</div>
+                  <div class="guide-brief">{{ guide.brief }}</div>
+                </div>
+              </div>
+
+              <div v-if="expandedGuideId === guide.id" class="guide-expand">
+                <div class="guide-full">{{ guide.fullIntro }}</div>
+
+                <div class="guide-actions">
+                  <button type="button" class="guide-action">
+                    <ion-icon :icon="chatbubbleEllipsesOutline" />
+                    <span>对话</span>
+                  </button>
+                  <button type="button" class="guide-action">
+                    <ion-icon :icon="callOutline" />
+                    <span>电话</span>
+                  </button>
+                  <button type="button" class="guide-action route-action">
+                    <ion-icon :icon="mapOutline" />
+                    <span>推荐路线</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="feed-section">
@@ -135,11 +192,16 @@ import {
 } from '@ionic/vue'
 import {
   calendarOutline,
-  locationOutline,
+  callOutline,
+  chatbubbleEllipsesOutline,
+  chevronDownOutline,
+  chevronUpOutline,
+  extensionPuzzleOutline,
   flowerOutline,
+  locationOutline,
+  mapOutline,
   personAddOutline,
   carSportOutline,
-  extensionPuzzleOutline,
 } from 'ionicons/icons'
 
 type Category = 'all' | 'weekend' | 'festival' | 'music' | 'family'
@@ -164,8 +226,21 @@ interface ActivityItem {
   cover: string
 }
 
+interface GuideItem {
+  id: number
+  name: string
+  age: number
+  gender: string
+  skills: string
+  routes: string
+  brief: string
+  fullIntro: string
+  avatar: string
+}
+
 const keyword = ref('')
 const activeCategory = ref<Category>('all')
+const expandedGuideId = ref<number | null>(null)
 
 const quickEntries: QuickEntry[] = [
   {
@@ -195,6 +270,42 @@ const quickEntries: QuickEntry[] = [
     desc: '一对一出游方案',
     icon: extensionPuzzleOutline,
     colorClass: 'green',
+  },
+]
+
+const guides: GuideItem[] = [
+  {
+    id: 1,
+    name: '周岚',
+    age: 32,
+    gender: '女',
+    skills: '行程定制、亲子陪玩、摄影点位规划',
+    routes: '桂林阳朔、龙脊梯田、黄姚古镇',
+    brief: '擅长做轻松不赶路的山水和古镇慢游路线。',
+    fullIntro: '7 年广西地接经验，熟悉亲子家庭和女生结伴游的节奏安排，能根据天气和出片需求灵活调整行程，也可协助安排住宿、包车和用餐。',
+    avatar: 'https://i.pravatar.cc/160?u=guide-1',
+  },
+  {
+    id: 2,
+    name: '梁川',
+    age: 35,
+    gender: '男',
+    skills: '自驾领航、徒步带队、边关路线设计',
+    routes: '崇左德天瀑布、明仕田园、通灵大峡谷',
+    brief: '偏自然风景和边关路线，适合周末 2-3 天深度游。',
+    fullIntro: '长期带自驾和小团出行，对崇左、靖西一带路况和景区节奏熟悉，适合想做瀑布、峡谷、边关公路摄影路线的用户，也支持小团队定制包车方案。',
+    avatar: 'https://i.pravatar.cc/160?u=guide-2',
+  },
+  {
+    id: 3,
+    name: '苏禾',
+    age: 29,
+    gender: '女',
+    skills: '海岛玩法规划、美食打卡、民宿筛选',
+    routes: '北海银滩、涠洲岛、侨港风情街',
+    brief: '擅长海边放松路线和情侣、闺蜜出游定制。',
+    fullIntro: '主打轻松海边度假和美食路线，可根据预算安排海景民宿、海岛船票、赶海体验和拍照点位，适合不想自己做攻略的人群。',
+    avatar: 'https://i.pravatar.cc/160?u=guide-3',
   },
 ]
 
@@ -278,8 +389,17 @@ const filteredActivities = computed(() => {
   })
 })
 
+const showGuideList = computed(() => activeCategory.value === 'family')
+
 const handleQuickEntry = (key: Exclude<Category, 'all'>) => {
   activeCategory.value = key
+  if (key === 'family' && expandedGuideId.value === null) {
+    expandedGuideId.value = guides[0]?.id ?? null
+  }
+}
+
+const toggleGuide = (id: number) => {
+  expandedGuideId.value = expandedGuideId.value === id ? null : id
 }
 
 const goDetail = (id: number) => {
@@ -352,11 +472,7 @@ const goDetail = (id: number) => {
 .hero-mask {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.08) 0%,
-    rgba(0, 0, 0, 0.56) 100%
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.56) 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -378,6 +494,7 @@ const goDetail = (id: number) => {
 
 .quick-entry-section,
 .segment-section,
+.guide-section,
 .feed-section {
   margin-bottom: 16px;
 }
@@ -387,6 +504,12 @@ const goDetail = (id: number) => {
   font-weight: 700;
   color: #1f2329;
   margin-bottom: 12px;
+}
+
+.section-subtitle {
+  margin-top: -6px;
+  font-size: 12px;
+  color: #6b7785;
 }
 
 .quick-grid {
@@ -401,9 +524,7 @@ const goDetail = (id: number) => {
   border-radius: 18px;
   padding: 14px 8px 12px;
   border: 1px solid #f3dcc2;
-  box-shadow:
-    0 2px 0 #f2d3ad,
-    0 8px 18px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 0 #f2d3ad, 0 8px 18px rgba(15, 23, 42, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -427,9 +548,7 @@ const goDetail = (id: number) => {
 
 .quick-item:active {
   transform: translateY(1px);
-  box-shadow:
-    0 1px 0 #f2d3ad,
-    0 4px 10px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 1px 0 #f2d3ad, 0 4px 10px rgba(15, 23, 42, 0.05);
 }
 
 .quick-icon {
@@ -441,9 +560,7 @@ const goDetail = (id: number) => {
   justify-content: center;
   font-size: 20px;
   margin-bottom: 8px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 4px 10px rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 
 .quick-icon.orange {
@@ -511,6 +628,126 @@ const goDetail = (id: number) => {
   font-size: 13px;
   color: #475467;
   font-weight: 500;
+}
+
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-card {
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e6edf5;
+  padding: 14px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.guide-top {
+  display: flex;
+  gap: 12px;
+}
+
+.guide-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.guide-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guide-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2329;
+}
+
+.expand-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: #f2f6fb;
+  color: #226bb3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.expand-button ion-icon {
+  font-size: 18px;
+}
+
+.guide-meta,
+.guide-skill,
+.guide-route,
+.guide-brief,
+.guide-full {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #556575;
+}
+
+.guide-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.guide-skill,
+.guide-route,
+.guide-brief {
+  margin-top: 4px;
+}
+
+.guide-expand {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #edf1f6;
+}
+
+.guide-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.guide-action {
+  border: 0;
+  min-height: 42px;
+  border-radius: 14px;
+  background: #f4f8fc;
+  color: #226bb3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guide-action ion-icon {
+  font-size: 18px;
+}
+
+.route-action {
+  background: #eaf4ff;
 }
 
 .activity-list {
@@ -598,6 +835,10 @@ const goDetail = (id: number) => {
 @media (max-width: 420px) {
   .quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .guide-actions {
+    grid-template-columns: 1fr;
   }
 }
 </style>
