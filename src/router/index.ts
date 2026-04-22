@@ -36,8 +36,8 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/TogetherPage.vue')
       },
       {
-        path: 'messages',
-        component: () => import('@/views/MessagesPage.vue')
+        path: 'mine',
+        component: () => import('@/views/MinePage.vue')
       }
     ]
   }

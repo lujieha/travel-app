@@ -23,12 +23,7 @@
           <ion-label>同行</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="messages" href="/tabs/messages">
-          <ion-icon aria-hidden="true" :icon="mail" />
-          <ion-label>消息</ion-label>
-        </ion-tab-button>
-
-        <ion-tab-button tab="mine" href="/tabs/home">
+        <ion-tab-button tab="mine" href="/tabs/mine">
           <ion-icon aria-hidden="true" :icon="happy" />
           <ion-label>我的</ion-label>
         </ion-tab-button>
@@ -47,5 +42,5 @@ import {
   IonPage,
   IonRouterOutlet,
 } from '@ionic/vue'
-import { flame, happy, home, mail, personAdd, share } from 'ionicons/icons'
+import { flame, happy, home, personAdd, share } from 'ionicons/icons'
 </script>
